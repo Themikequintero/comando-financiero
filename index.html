@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Comando Financiero">
+  <title>Comando Financiero 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue:#1E5EFF;--blue-end:#4DA3FF;--bg:#F0F3F8;--card:#FFFFFF;
+      --text:#1A1D1F;--text-muted:#6B7280;--divider:#E5E7EB;
+      --success:#22C55E;--warning:#F59E0B;--danger:#EF4444;
+      --sh-base:0 4px 10px rgba(0,0,0,0.04);
+      --sh-raised:0 10px 25px rgba(0,0,0,0.06);
+      --sh-float:0 20px 40px rgba(0,0,0,0.08);
+      --safe-top:env(safe-area-inset-top,0px);
+      --safe-bot:env(safe-area-inset-bottom,0px);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+    body{min-height:100vh;background:var(--bg);font-family:'Sora',sans-serif;color:var(--text);overflow-x:hidden}
+
+    /* HEADER */
+    .hdr{background:linear-gradient(140deg,#1245CC 0%,var(--blue) 45%,var(--blue-end) 100%);
+      padding:calc(48px + var(--safe-top)) 24px 80px;border-radius:0 0 36px 36px;position:relative;overflow:hidden}
+    .orb1{position:absolute;top:-60px;right:-60px;width:240px;height:240px;border-radius:50%;background:rgba(255,255,255,0.07);pointer-events:none}
+    .orb2{position:absolute;bottom:-80px;left:-40px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,0.04);pointer-events:none}
+    .hdr-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;position:relative;z-index:1;max-width:600px;margin-left:auto;margin-right:auto}
+    .hdr-greet{color:rgba(255,255,255,0.7);font-size:13px;font-weight:500}
+    .hdr-name{color:#fff;font-size:18px;font-weight:700;margin-top:2px}
+    .profile-wrap{position:relative}
+    .profile-pic{width:56px;height:56px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,0.4);display:block}
+    .profile-dot{position:absolute;bottom:2px;right:2px;width:12px;height:12px;border-radius:50%;background:var(--success);border:2px solid white}
+
+    /* BALANCE */
+    .bal{text-align:center;position:relative;z-index:1;max-width:600px;margin:0 auto}
+    .bal-lbl{font-size:12px;font-weight:600;color:rgba(255,255,255,0.6);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}
+    .bal-amt{font-size:48px;font-weight:700;color:#fff;letter-spacing:-1.5px;line-height:1;margin-bottom:6px}
+    .bal-sub{font-size:13px;color:rgba(255,255,255,0.55)}
+    .bal-track{margin-top:18px;background:rgba(255,255,255,0.15);border-radius:999px;height:6px;overflow:hidden}
+    .bal-fill{height:100%;border-radius:999px;background:rgba(255,255,255,0.85);transition:width .8s ease}
+    .bal-labels{display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:rgba(255,255,255,0.5)}
+
+    /* CONTENT */
+    .content{max-width:600px;margin:-44px auto 0;padding:0 16px calc(32px + var(--safe-bot));position:relative;z-index:2}
+
+    /* ALERTS */
+    .alert-card{border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;margin-bottom:8px;box-shadow:var(--sh-base)}
+    .alert-card.danger{background:rgba(239,68,68,0.08);border-left:3px solid var(--danger)}
+    .alert-card.warning{background:rgba(245,158,11,0.08);border-left:3px solid var(--warning)}
+    .alert-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .alert-card.danger .alert-dot{background:var(--danger)}
+    .alert-card.warning .alert-dot{background:var(--warning)}
+    .alert-txt{font-size:13px;font-weight:500;flex:1}
+    .alert-card.danger .alert-txt{color:#B91C1C}
+    .alert-card.warning .alert-txt{color:#92400E}
+    .alert-amt{font-size:13px;font-weight:700;flex-shrink:0}
+    .alert-card.danger .alert-amt{color:var(--danger)}
+    .alert-card.warning .alert-amt{color:var(--warning)}
+
+    /* METRICS */
+    .metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+    .met{background:var(--card);border-radius:20px;padding:18px 18px 16px;box-shadow:var(--sh-base)}
+    .met-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:12px}
+    .met-val{font-size:22px;font-weight:700;letter-spacing:-.5px;line-height:1;margin-bottom:4px}
+    .met-lbl{font-size:12px;color:var(--text-muted);font-weight:500}
+
+    /* SECTION HEAD */
+    .sec-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;margin-top:24px}
+    .sec-title{font-size:16px;font-weight:700}
+    .sec-badge{font-size:11px;font-weight:600;color:var(--text-muted);background:var(--divider);padding:3px 10px;border-radius:999px}
+
+    /* CREDIT CARDS */
+    .cards-list{display:flex;flex-direction:column;gap:10px}
+    .cc{background:var(--card);border-radius:20px;padding:18px 20px;box-shadow:var(--sh-base)}
+    .cc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+    .cc-name{font-size:15px;font-weight:700}
+    .cc-avail{font-size:12px;color:var(--text-muted);margin-top:2px}
+    .cc-due{font-size:11px;font-weight:600;padding:4px 10px;border-radius:999px}
+    .cc-due.danger{background:rgba(239,68,68,0.1);color:var(--danger)}
+    .cc-due.warning{background:rgba(245,158,11,0.1);color:var(--warning)}
+    .cc-due.ok{background:rgba(34,197,94,0.1);color:var(--success)}
+    .cc-track{height:7px;background:var(--bg);border-radius:999px;overflow:hidden;margin-bottom:10px}
+    .cc-fill{height:100%;border-radius:999px;transition:width .7s ease}
+    .cc-fill.danger{background:linear-gradient(90deg,#EF4444,#F87171)}
+    .cc-fill.warning{background:linear-gradient(90deg,#F59E0B,#FCD34D)}
+    .cc-fill.ok{background:linear-gradient(90deg,var(--blue),var(--blue-end))}
+    .cc-foot{display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted)}
+    .cc-foot strong{color:var(--text);font-weight:600}
+
+    /* BUDGET */
+    .bud-card{background:var(--card);border-radius:20px;box-shadow:var(--sh-base);overflow:hidden}
+    .bud-row{display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid var(--bg)}
+    .bud-row:last-child{border-bottom:none}
+    .bud-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+    .bud-info{flex:1;min-width:0}
+    .bud-name{font-size:13px;font-weight:600;margin-bottom:5px}
+    .bud-track{height:5px;background:var(--bg);border-radius:999px;overflow:hidden}
+    .bud-fill{height:100%;border-radius:999px;transition:width .6s ease}
+    .bud-fill.ok{background:var(--blue)}
+    .bud-fill.warning{background:var(--warning)}
+    .bud-fill.danger{background:var(--danger)}
+    .bud-amts{text-align:right;flex-shrink:0}
+    .bud-spent{font-size:13px;font-weight:700}
+    .bud-total{font-size:11px;color:var(--text-muted);margin-top:1px}
+
+    /* TRANSACTIONS */
+    .tx-list{display:flex;flex-direction:column;gap:8px}
+    .tx{background:var(--card);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:14px;box-shadow:var(--sh-base)}
+    .tx-ico{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+    .tx-desc{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .tx-meta{font-size:11px;color:var(--text-muted);margin-top:2px}
+    .tx-amt{font-size:14px;font-weight:700;text-align:right;flex-shrink:0;white-space:nowrap}
+
+    /* FAB */
+    .fab{position:fixed;bottom:calc(24px + var(--safe-bot));right:20px;width:58px;height:58px;border-radius:50%;
+      background:linear-gradient(135deg,var(--blue),var(--blue-end));box-shadow:0 8px 24px rgba(30,94,255,0.4);
+      display:flex;align-items:center;justify-content:center;text-decoration:none;transition:transform .15s;z-index:100}
+    .fab:active{transform:scale(0.93)}
+
+    /* EMPTY */
+    .empty{background:var(--card);border-radius:20px;padding:28px 20px;text-align:center;box-shadow:var(--sh-base)}
+    .empty p{font-size:14px;color:var(--text-muted);line-height:1.6}
+
+    /* SKELETON */
+    .skel{background:linear-gradient(90deg,#e8ecf0 25%,#f0f3f6 50%,#e8ecf0 75%);background-size:200% 100%;
+      animation:shim 1.4s infinite;border-radius:12px}
+    @keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .fu{animation:fadeUp .3s ease both}
+
+    /* Category tints */
+    .bg-Alimentación{background:rgba(34,197,94,.11)}.bg-Vivienda{background:rgba(30,94,255,.09)}
+    .bg-Servicios{background:rgba(59,191,248,.11)}.bg-Transporte{background:rgba(155,138,251,.11)}
+    .bg-Educación{background:rgba(244,114,182,.11)}.bg-Salud{background:rgba(251,146,60,.11)}
+    .bg-Entretenimiento{background:rgba(167,139,250,.11)}.bg-Negocio{background:rgba(52,211,153,.11)}
+    .bg-Familia{background:rgba(96,165,250,.11)}.bg-Deuda{background:rgba(239,68,68,.11)}
+    .bg-Suscripciones{background:rgba(233,196,106,.11)}.bg-Otro{background:rgba(107,114,128,.09)}
+
+    @media(min-width:640px){
+      .metrics{grid-template-columns:repeat(4,1fr)}
+      .cards-list{display:grid;grid-template-columns:1fr 1fr}
+      .fab{right:calc(50% - 300px + 20px)}
+    }
+  </style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="orb1"></div><div class="orb2"></div>
+  <div class="hdr-top">
+    <div>
+      <div class="hdr-greet" id="greet">Buenos días,</div>
+      <div class="hdr-name">Mike 👋</div>
+    </div>
+    <div class="profile-wrap">
+      <img src="Mike.png" alt="Mike" class="profile-pic">
+      <div class="profile-dot"></div>
+    </div>
+  </div>
+  <div class="bal">
+    <div class="bal-lbl">Disponible este mes</div>
+    <div class="bal-amt" id="balAmt">—</div>
+    <div class="bal-sub" id="balSub">Cargando...</div>
+    <div class="bal-track"><div class="bal-fill" id="balFill" style="width:0%"></div></div>
+    <div class="bal-labels"><span id="barSpent">Gastado $0</span><span id="barIncome">Ingreso $9.996.000</span></div>
+  </div>
+</div>
+
+<div class="content">
+  <div id="alertsWrap" style="margin-bottom:4px"></div>
+
+  <div class="metrics" id="metricsRow">
+    <div class="skel" style="height:100px"></div>
+    <div class="skel" style="height:100px"></div>
+    <div class="skel" style="height:100px"></div>
+    <div class="skel" style="height:100px"></div>
+  </div>
+
+  <div class="sec-head">
+    <div class="sec-title">Tarjetas de crédito</div>
+    <div class="sec-badge" id="cardsBadge">4 tarjetas</div>
+  </div>
+  <div class="cards-list" id="cardsList">
+    <div class="skel" style="height:120px;border-radius:20px"></div>
+    <div class="skel" style="height:120px;border-radius:20px"></div>
+  </div>
+
+  <div class="sec-head">
+    <div class="sec-title">Presupuesto del mes</div>
+    <div class="sec-badge" id="budgetBadge"></div>
+  </div>
+  <div class="bud-card" id="budgetList">
+    <div style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px">Cargando...</div>
+  </div>
+
+  <div class="sec-head">
+    <div class="sec-title">Últimos movimientos</div>
+    <div class="sec-badge" id="txBadge"></div>
+  </div>
+  <div class="tx-list" id="txList">
+    <div class="skel" style="height:68px;border-radius:16px"></div>
+    <div class="skel" style="height:68px;border-radius:16px"></div>
+  </div>
+</div>
+
+<a href="entry.html" class="fab" aria-label="Registrar gasto">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <path d="M12 5v14M5 12h14" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+  </svg>
+</a>
+
+<script>
+const SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+
+const EMOJI={'Alimentación':'🍽️','Vivienda':'🏠','Servicios':'💡','Transporte':'🚗',
+  'Educación':'📚','Salud':'❤️','Entretenimiento':'🎬','Negocio':'💼',
+  'Familia':'👨‍👩‍👧','Deuda':'💳','Suscripciones':'📱','Telecomunicaciones':'📡','Otro':'📌'};
+
+const fmt=n=>'$'+Math.round(n).toLocaleString('es-CO');
+const pct=(a,b)=>b>0?Math.min(Math.round(a/b*100),100):0;
+const barCls=p=>p>=85?'danger':p>=65?'warning':'ok';
+
+function dueInfo(ds){
+  if(!ds||ds==='Invalid Date')return{label:'—',cls:'ok'};
+  const d=new Date(ds);if(isNaN(d))return{label:'—',cls:'ok'};
+  const diff=Math.ceil((d-new Date())/86400000);
+  if(diff<=0)return{label:'Vence hoy',cls:'danger'};
+  if(diff<=3)return{label:`Vence en ${diff}d`,cls:'danger'};
+  if(diff<=10)return{label:`Vence en ${diff}d`,cls:'warning'};
+  return{label:`Vence ${d.getDate()}/${d.getMonth()+1}`,cls:'ok'};
+}
+
+const h=new Date().getHours();
+document.getElementById('greet').textContent=h<12?'Buenos días,':h<18?'Buenas tardes,':'Buenas noches,';
+
+function renderBalance(s){
+  const av=s.available||0,inc=s.baseIncome||9996000,sp=s.totalSpent||0,p=pct(sp,inc);
+  document.getElementById('balAmt').textContent=fmt(av);
+  document.getElementById('balSub').textContent=`$2.800 USD · ${p}% utilizado`;
+  document.getElementById('balFill').style.width=p+'%';
+  document.getElementById('barSpent').textContent='Gastado '+fmt(sp);
+  document.getElementById('barIncome').textContent='Ingreso '+fmt(inc);
+}
+
+function renderAlerts(cards){
+  const w=document.getElementById('alertsWrap');
+  w.innerHTML=cards.filter(c=>{const{cls}=dueInfo(c.dueDate);return cls!=='ok';}).map(c=>{
+    const{label,cls}=dueInfo(c.dueDate);
+    return`<div class="alert-card ${cls} fu"><div class="alert-dot"></div><div class="alert-txt"><strong>${c.name}</strong> — ${label}</div><div class="alert-amt">${fmt(c.minPayment||0)}</div></div>`;
+  }).join('');
+}
+
+function renderMetrics(s,cards){
+  const debt=cards.reduce((a,c)=>a+(c.used||0),0);
+  const minp=cards.reduce((a,c)=>a+(c.minPayment||0),0);
+  document.getElementById('metricsRow').innerHTML=`
+    <div class="met fu"><div class="met-ico" style="background:rgba(30,94,255,.09)">💰</div><div class="met-val" style="color:var(--blue)">${fmt(s.available||0)}</div><div class="met-lbl">Disponible</div></div>
+    <div class="met fu"><div class="met-ico" style="background:rgba(239,68,68,.09)">💳</div><div class="met-val" style="color:var(--danger)">${fmt(debt)}</div><div class="met-lbl">Deuda total</div></div>
+    <div class="met fu"><div class="met-ico" style="background:rgba(245,158,11,.09)">📅</div><div class="met-val" style="color:var(--warning)">${fmt(minp)}</div><div class="met-lbl">Mín. tarjetas</div></div>
+    <div class="met fu"><div class="met-ico" style="background:rgba(34,197,94,.09)">📊</div><div class="met-val" style="color:var(--success)">${pct(s.totalSpent||0,s.baseIncome||9996000)}%</div><div class="met-lbl">% Utilizado</div></div>`;
+}
+
+function renderCards(cards){
+  document.getElementById('cardsBadge').textContent=cards.length+' tarjetas';
+  document.getElementById('cardsList').innerHTML=cards.map(c=>{
+    const p=c.usedPct||0,cls=barCls(p),{label,cls:dc}=dueInfo(c.dueDate);
+    const col=cls==='danger'?'var(--danger)':cls==='warning'?'var(--warning)':'var(--blue)';
+    return`<div class="cc fu"><div class="cc-top"><div><div class="cc-name">${c.name}</div><div class="cc-avail">Disponible ${fmt(c.available||0)}</div></div><div class="cc-due ${dc}">${label}</div></div><div class="cc-track"><div class="cc-fill ${cls}" style="width:${p}%"></div></div><div class="cc-foot"><span>Usado <strong>${fmt(c.used||0)}</strong> / ${fmt(c.limit||0)}</span><span>Mín <strong>${fmt(c.minPayment||0)}</strong> · <strong style="color:${col}">${p}%</strong></span></div></div>`;
+  }).join('')||'<div class="empty"><p>Sin datos de tarjetas</p></div>';
+}
+
+function renderBudget(budget){
+  const active=budget.filter(b=>b.budget>0);
+  document.getElementById('budgetBadge').textContent=active.length+' categorías';
+  if(!active.length){document.getElementById('budgetList').innerHTML='<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px">Sin datos aún</div>';return;}
+  document.getElementById('budgetList').innerHTML=active.map(b=>{
+    const cls=barCls(b.pct||0),emoji=EMOJI[b.category]||'📌';
+    return`<div class="bud-row"><div class="bud-ico bg-${b.category}">${emoji}</div><div class="bud-info"><div class="bud-name">${b.category}</div><div class="bud-track"><div class="bud-fill ${cls}" style="width:${b.pct||0}%"></div></div></div><div class="bud-amts"><div class="bud-spent">${fmt(b.spent||0)}</div><div class="bud-total">${fmt(b.budget)}</div></div></div>`;
+  }).join('');
+}
+
+function renderTx(txs){
+  document.getElementById('txBadge').textContent=txs.length>0?'Últimas '+txs.length:'';
+  if(!txs.length){document.getElementById('txList').innerHTML='<div class="empty"><p>Sin movimientos aún.<br>Usa el botón <strong>+</strong> para registrar.</p></div>';return;}
+  document.getElementById('txList').innerHTML=txs.map(tx=>{
+    const emoji=EMOJI[tx.category]||'📌',sign=tx.type==='ingreso'?'+':'-',col=tx.type==='ingreso'?'var(--success)':'var(--text)';
+    const cuota=tx.cuotas>1?` · ${tx.cuotas} cuotas`:'';
+    return`<div class="tx fu"><div class="tx-ico bg-${tx.category||'Otro'}">${emoji}</div><div style="flex:1;min-width:0"><div class="tx-desc">${tx.description||'—'}</div><div class="tx-meta">${tx.date||''} · ${tx.category||''}${tx.card?' · '+tx.card:''}${cuota}</div></div><div class="tx-amt" style="color:${col}">${sign}${fmt(tx.amount||0)}</div></div>`;
+  }).join('');
+}
+
+async function loadData(){
+  if(SCRIPT_URL==='YOUR_APPS_SCRIPT_URL_HERE')return;
+  try{
+    const res=await fetch(`${SCRIPT_URL}?action=dashboard`);
+    const d=await res.json();
+    renderBalance(d.summary||{});
+    renderAlerts(d.cards||[]);
+    renderMetrics(d.summary||{},d.cards||[]);
+    renderCards(d.cards||[]);
+    renderBudget(d.budget||[]);
+    renderTx(d.transactions||[]);
+  }catch(e){
+    document.getElementById('metricsRow').innerHTML='<div style="grid-column:1/-1;padding:16px;background:rgba(239,68,68,.06);border-radius:16px;font-size:13px;color:var(--danger)">Error de conexión. Verifica tu URL.</div>';
+  }
+}
+
+loadData();
+setInterval(loadData,5*60*1000);
+</script>
+</body>
+</html>

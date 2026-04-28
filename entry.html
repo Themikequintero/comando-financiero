@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CF 2026">
+  <title>Registro · Comando Financiero</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================
+       CONFIGURATION — paste your Apps Script URL here
+       ============================================ */
+    /* Set SCRIPT_URL in the <script> section below */
+
+    :root {
+      --bg:          #080b12;
+      --surface:     #0f1623;
+      --surface2:    #161f2e;
+      --border:      #1e2d40;
+      --text:        #e8f0f8;
+      --text-muted:  #6a849c;
+      --teal:        #00c9b1;
+      --teal-dim:    rgba(0,201,177,0.12);
+      --teal-dim2:   rgba(0,201,177,0.06);
+      --green:       #4ade80;
+      --amber:       #f59e0b;
+      --red:         #f87171;
+      --radius:      14px;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      overflow: hidden;
+    }
+
+    /* ── Layout ── */
+    .app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      height: 100dvh;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px 12px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      flex-shrink: 0;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--teal-dim);
+      border: 1px solid rgba(0,201,177,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo svg { width: 16px; height: 16px; }
+
+    .header-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.2px;
+    }
+
+    .header-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .dash-link {
+      font-size: 12px;
+      color: var(--teal);
+      text-decoration: none;
+      padding: 6px 12px;
+      border: 1px solid rgba(0,201,177,0.25);
+      border-radius: 20px;
+      transition: background 0.15s;
+    }
+
+    .dash-link:hover { background: var(--teal-dim); }
+
+    /* ── Chat area ── */
+    .chat-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      scroll-behavior: smooth;
+    }
+
+    .chat-area::-webkit-scrollbar { width: 3px; }
+    .chat-area::-webkit-scrollbar-track { background: transparent; }
+    .chat-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* ── Messages ── */
+    .msg {
+      display: flex;
+      flex-direction: column;
+      animation: fadeUp 0.2s ease;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .msg.user  { align-items: flex-end; }
+    .msg.bot   { align-items: flex-start; }
+
+    .bubble {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .msg.user .bubble {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-bottom-right-radius: 4px;
+    }
+
+    .msg.bot .bubble {
+      background: var(--teal-dim);
+      border: 1px solid rgba(0,201,177,0.2);
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+    }
+
+    .msg.error .bubble {
+      background: rgba(248,113,113,0.1);
+      border: 1px solid rgba(248,113,113,0.2);
+      color: #f87171;
+    }
+
+    .bubble .amount {
+      font-family: 'DM Mono', monospace;
+      font-weight: 500;
+      color: var(--teal);
+    }
+
+    .bubble .tag {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.06);
+      color: var(--text-muted);
+      margin-left: 4px;
+    }
+
+    .msg-time {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      padding: 0 2px;
+    }
+
+    /* ── Typing indicator ── */
+    .typing-dots {
+      display: flex;
+      gap: 4px;
+      padding: 12px 14px;
+    }
+
+    .typing-dots span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--teal);
+      animation: dot 1.2s infinite ease-in-out;
+    }
+
+    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes dot {
+      0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+      40%            { transform: scale(1);   opacity: 1; }
+    }
+
+    /* ── Welcome state ── */
+    .welcome {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+
+    .welcome-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--teal-dim);
+      border: 1px solid rgba(0,201,177,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .welcome h2 { font-size: 16px; color: var(--text); margin-bottom: 8px; font-weight: 500; }
+    .welcome p  { font-size: 13px; line-height: 1.6; }
+
+    .examples {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: left;
+    }
+
+    .example-chip {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .example-chip:hover {
+      border-color: var(--teal);
+      color: var(--text);
+    }
+
+    .example-chip span {
+      display: block;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      opacity: 0.7;
+    }
+
+    /* ── Input area ── */
+    .input-area {
+      padding: 12px 16px;
+      padding-bottom: calc(12px + var(--safe-bottom));
+      border-top: 1px solid var(--border);
+      background: var(--bg);
+      flex-shrink: 0;
+    }
+
+    .quick-chips {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .quick-chips::-webkit-scrollbar { display: none; }
+
+    .chip {
+      flex-shrink: 0;
+      padding: 5px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      font-size: 12px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+
+    .chip:hover, .chip:active {
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+    }
+
+    textarea {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      padding: 10px 14px;
+      resize: none;
+      outline: none;
+      min-height: 44px;
+      max-height: 100px;
+      line-height: 1.5;
+      transition: border-color 0.15s;
+    }
+
+    textarea::placeholder { color: var(--text-muted); }
+    textarea:focus { border-color: rgba(0,201,177,0.4); }
+
+    .send-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--teal);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+
+    .send-btn:hover  { opacity: 0.9; }
+    .send-btn:active { transform: scale(0.95); }
+    .send-btn:disabled { opacity: 0.4; cursor: default; }
+
+    .send-btn svg { width: 18px; height: 18px; }
+
+    /* ── Setup warning ── */
+    .setup-banner {
+      background: rgba(245,158,11,0.1);
+      border: 1px solid rgba(245,158,11,0.2);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 13px;
+      color: var(--amber);
+      margin-bottom: 12px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div class="header-left">
+      <div class="logo">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 8C2 4.686 4.686 2 8 2s6 2.686 6 6-2.686 6-6 6-6-2.686-6-6z" stroke="#00c9b1" stroke-width="1.5"/>
+          <path d="M8 5v3l2 1.5" stroke="#00c9b1" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="header-title">Comando Financiero</div>
+        <div class="header-sub">Registro de gastos</div>
+      </div>
+    </div>
+    <a href="index.html" class="dash-link">Dashboard</a>
+  </header>
+
+  <div class="chat-area" id="chatArea">
+    <div class="welcome" id="welcomeMsg">
+      <div class="welcome-icon">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M11 2L3 7v8l8 5 8-5V7L11 2z" stroke="#00c9b1" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M11 2v13M3 7l8 5 8-5" stroke="#00c9b1" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <h2>Hola, escribe tu gasto</h2>
+      <p>Escribe en lenguaje natural. La IA lo clasifica automáticamente.</p>
+      <div class="examples">
+        <div class="example-chip" onclick="fillExample(this)">
+          Mercado Carulla 120k Davivienda
+          <span>→ Alimentación · $120.000 · Davivienda</span>
+        </div>
+        <div class="example-chip" onclick="fillExample(this)">
+          Smart TV 1.8M TUYA 24 cuotas
+          <span>→ Entretenimiento · $1.800.000 · 24 cuotas ($75k/mes)</span>
+        </div>
+        <div class="example-chip" onclick="fillExample(this)">
+          Gasolina 90k Efectivo
+          <span>→ Transporte · $90.000 · Efectivo</span>
+        </div>
+        <div class="example-chip" onclick="fillExample(this)">
+          Consulta médica 80k Scotiabank
+          <span>→ Salud · $80.000 · Scotiabank</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div class="setup-banner" id="setupBanner">
+      Configura el SCRIPT_URL en entry.html antes de registrar gastos.
+    </div>
+    <div class="quick-chips" id="quickChips">
+      <div class="chip" onclick="appendChip('Efectivo')">Efectivo</div>
+      <div class="chip" onclick="appendChip('TUYA')">TUYA</div>
+      <div class="chip" onclick="appendChip('Alkosto')">Alkosto</div>
+      <div class="chip" onclick="appendChip('Scotiabank')">Scotiabank</div>
+      <div class="chip" onclick="appendChip('SISTECREDITO')">SISTECREDITO</div>
+      <div class="chip" onclick="appendChip('Davivienda')">Davivienda</div>
+      <div class="chip" onclick="appendChip('OnTop')">OnTop</div>
+    </div>
+    <div class="input-row">
+      <textarea
+        id="expenseInput"
+        placeholder="Ej: Sushi 80k Alkosto 3 cuotas"
+        rows="1"
+        autofocus
+      ></textarea>
+      <button class="send-btn" id="sendBtn" onclick="submitExpense()">
+        <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16 9L2 2l3 7-3 7 14-7z" fill="#080b12"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ============================================================
+  // CONFIGURATION — replace with your Apps Script web app URL
+  // ============================================================
+  const SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+  // ============================================================
+
+  const chatArea    = document.getElementById('chatArea');
+  const input       = document.getElementById('expenseInput');
+  const sendBtn     = document.getElementById('sendBtn');
+  const welcomeMsg  = document.getElementById('welcomeMsg');
+  const setupBanner = document.getElementById('setupBanner');
+
+  if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+    setupBanner.style.display = 'block';
+  }
+
+  // Auto-resize textarea
+  input.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+  });
+
+  // Enter = send (Shift+Enter = new line)
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      submitExpense();
+    }
+  });
+
+  function fillExample(el) {
+    const text = el.childNodes[0].textContent.trim();
+    input.value = text;
+    input.style.height = 'auto';
+    input.focus();
+    welcomeMsg.style.display = 'none';
+  }
+
+  function appendChip(text) {
+    const current = input.value.trim();
+    input.value = current ? current + ' ' + text : text;
+    input.focus();
+  }
+
+  function addMessage(text, type) {
+    welcomeMsg.style.display = 'none';
+
+    const msg = document.createElement('div');
+    msg.className = `msg ${type}`;
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+
+    if (type === 'bot' && text.includes('·')) {
+      // Format confirmation message
+      const parts = text.split('·').map(p => p.trim());
+      const desc = parts[0];
+      const amount = parts[1] || '';
+      const rest = parts.slice(2);
+
+      bubble.innerHTML = `
+        <strong>${desc}</strong>
+        <span class="amount"> ${amount}</span>
+        ${rest.map(p => `<span class="tag">${p}</span>`).join('')}
+      `;
+    } else {
+      bubble.textContent = text;
+    }
+
+    const timeEl = document.createElement('div');
+    timeEl.className = 'msg-time';
+    timeEl.textContent = new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
+
+    msg.appendChild(bubble);
+    msg.appendChild(timeEl);
+    chatArea.appendChild(msg);
+    chatArea.scrollTop = chatArea.scrollHeight;
+    return msg;
+  }
+
+  function addTyping() {
+    const msg = document.createElement('div');
+    msg.className = 'msg bot';
+    msg.id = 'typingIndicator';
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble typing-dots';
+    bubble.innerHTML = '<span></span><span></span><span></span>';
+    msg.appendChild(bubble);
+    chatArea.appendChild(msg);
+    chatArea.scrollTop = chatArea.scrollHeight;
+  }
+
+  function removeTyping() {
+    const t = document.getElementById('typingIndicator');
+    if (t) t.remove();
+  }
+
+  async function submitExpense() {
+    const text = input.value.trim();
+    if (!text || SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') return;
+
+    sendBtn.disabled = true;
+    input.value = '';
+    input.style.height = 'auto';
+
+    addMessage(text, 'user');
+    addTyping();
+
+    try {
+      const response = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'log', text: text })
+      });
+
+      const data = await response.json();
+      removeTyping();
+
+      if (data.success) {
+        addMessage(data.confirmation, 'bot');
+        saveLocal(data.parsed);
+      } else {
+        addMessage('Error: ' + (data.error || 'No se pudo registrar'), 'error');
+      }
+    } catch(err) {
+      removeTyping();
+      addMessage('Error de conexión. Revisa tu internet e intenta de nuevo.', 'error');
+    }
+
+    sendBtn.disabled = false;
+    input.focus();
+  }
+
+  // Save last 20 transactions to localStorage for history
+  function saveLocal(parsed) {
+    try {
+      const history = JSON.parse(localStorage.getItem('cf_history') || '[]');
+      history.unshift({
+        description: parsed.description,
+        amount: parsed.amount,
+        category: parsed.category,
+        card: parsed.card,
+        cuotas: parsed.cuotas,
+        date: new Date().toISOString()
+      });
+      localStorage.setItem('cf_history', JSON.stringify(history.slice(0, 20)));
+    } catch(e) {}
+  }
+</script>
+</body>
+</html>

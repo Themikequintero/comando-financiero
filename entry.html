@@ -550,11 +550,7 @@
     addTyping();
 
     try {
-      const response = await fetch(SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'log', text: text })
-      });
+      const response = await fetch(`${SCRIPT_URL}?action=log&text=${encodeURIComponent(text)}`);
 
       const data = await response.json();
       removeTyping();

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Registro">
+  <title>Registro · Comando Financiero</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue:#1E5EFF;--blue-end:#4DA3FF;--bg:#F0F3F8;--card:#FFFFFF;
+      --text:#1A1D1F;--muted:#6B7280;--divider:#E5E7EB;
+      --success:#22C55E;--warning:#F59E0B;--danger:#EF4444;
+      --sh-base:0 4px 10px rgba(0,0,0,0.04);
+      --sh-raised:0 10px 25px rgba(0,0,0,0.06);
+      --sh-float:0 20px 40px rgba(0,0,0,0.08);
+      --safe-bot:env(safe-area-inset-bottom,0px);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+    body{min-height:100vh;background:var(--bg);font-family:'Sora',sans-serif;color:var(--text);overflow-x:hidden}
+
+    .hdr{background:linear-gradient(135deg,var(--blue) 0%,var(--blue-end) 100%);
+      padding:52px 24px 52px;border-radius:0 0 32px 32px;position:relative;overflow:hidden}
+    .hdr::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;
+      border-radius:50%;background:rgba(255,255,255,0.06);pointer-events:none}
+    .hdr::after{content:'';position:absolute;bottom:-60px;left:-20px;width:220px;height:220px;
+      border-radius:50%;background:rgba(255,255,255,0.04);pointer-events:none}
+    .hdr-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;position:relative;z-index:1}
+    .back-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:999px;
+      background:rgba(255,255,255,0.18);border:1.5px solid rgba(255,255,255,0.28);
+      color:#fff;font-family:'Sora',sans-serif;font-size:12px;font-weight:600;text-decoration:none}
+    .profile-btn{width:40px;height:40px;border-radius:50%;overflow:hidden;
+      border:2px solid rgba(255,255,255,0.35);display:block;background:rgba(255,255,255,0.15);flex-shrink:0}
+    .profile-btn img{width:100%;height:100%;object-fit:cover;display:block}
+    .hdr-q{font-size:26px;font-weight:700;color:#fff;line-height:1.25;position:relative;z-index:1}
+    .hdr-q .m{color:rgba(255,255,255,0.55);font-weight:400}
+
+    .main{padding:0 16px calc(32px + var(--safe-bot));margin-top:-20px;position:relative;z-index:2}
+
+    .input-card{background:var(--card);border-radius:20px;box-shadow:var(--sh-raised);padding:20px;margin-bottom:14px}
+    .field-lbl{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px}
+    textarea{width:100%;border:none;outline:none;font-family:'Sora',sans-serif;font-size:17px;font-weight:500;
+      color:var(--text);resize:none;min-height:54px;max-height:120px;line-height:1.5;background:transparent}
+    textarea::placeholder{color:#C8CDD8;font-weight:400}
+    .divider{height:1px;background:var(--divider);margin:16px 0}
+
+    .chips-wrap{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{padding:7px 14px;border-radius:999px;background:#F2F4F8;border:1.5px solid transparent;
+      font-family:'Sora',sans-serif;font-size:12px;font-weight:600;color:var(--muted);
+      cursor:pointer;transition:all .15s;user-select:none}
+    .chip:active{transform:scale(0.96)}
+    .chip.active{background:rgba(30,94,255,0.08);border-color:var(--blue);color:var(--blue)}
+    .chip.debit{border-color:rgba(34,197,94,0.3);color:var(--success);background:rgba(34,197,94,0.06)}
+    .chip.debit.active{background:rgba(34,197,94,0.12);border-color:var(--success)}
+
+    .cta-btn{width:100%;height:52px;border-radius:999px;
+      background:linear-gradient(135deg,var(--blue) 0%,var(--blue-end) 100%);
+      border:none;font-family:'Sora',sans-serif;font-size:15px;font-weight:600;color:#fff;
+      cursor:pointer;margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px;
+      transition:opacity .15s,transform .1s;box-shadow:0 8px 20px rgba(30,94,255,0.28)}
+    .cta-btn:active{transform:scale(0.97);opacity:0.9}
+    .cta-btn:disabled{opacity:0.45;cursor:default;transform:none}
+
+    /* Type hint */
+    .type-hint{font-size:11px;color:var(--muted);margin-top:10px;text-align:center;min-height:16px}
+    .type-hint.credit{color:var(--blue)}
+    .type-hint.debit{color:var(--success)}
+    .type-hint.payment{color:var(--warning)}
+
+    .sec-lbl{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;padding:0 2px;margin-bottom:10px}
+
+    .empty-card{background:var(--card);border-radius:20px;box-shadow:var(--sh-base);padding:28px 20px 24px;text-align:center}
+    .empty-ico{width:46px;height:46px;border-radius:13px;background:rgba(30,94,255,0.08);
+      display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:20px}
+    .empty-txt{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:16px}
+
+    .example{display:flex;align-items:center;justify-content:space-between;
+      background:#F5F7FA;border-radius:12px;padding:11px 14px;cursor:pointer;
+      margin-bottom:8px;transition:background .15s;gap:12px}
+    .example:last-child{margin-bottom:0}
+    .example:active{background:rgba(30,94,255,0.06)}
+    .ex-text{font-size:13px;font-weight:500;color:var(--text)}
+    .ex-hint{font-size:11px;color:var(--muted);margin-top:2px}
+    .ex-arrow{color:var(--muted);font-size:14px;flex-shrink:0}
+
+    .tx-item{background:var(--card);border-radius:16px;box-shadow:var(--sh-base);
+      padding:15px 18px;display:flex;align-items:center;gap:14px;margin-bottom:8px;
+      animation:fadeUp .22s ease}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    .tx-ico{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+    .tx-desc{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .tx-meta{font-size:11px;color:var(--muted);margin-top:2px}
+    .tx-amount{font-size:15px;font-weight:700;text-align:right;white-space:nowrap}
+    .tx-tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;
+      background:rgba(30,94,255,0.08);color:var(--blue);font-weight:600;margin-top:4px}
+    .tx-tag.debit{background:rgba(34,197,94,0.1);color:var(--success)}
+    .tx-tag.payment{background:rgba(245,158,11,0.1);color:var(--warning)}
+
+    .dots{display:flex;gap:5px}
+    .dots span{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.85);animation:dot 1.2s infinite ease-in-out}
+    .dots span:nth-child(2){animation-delay:.2s}
+    .dots span:nth-child(3){animation-delay:.4s}
+    @keyframes dot{0%,80%,100%{transform:scale(0.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+
+    .toast{position:fixed;bottom:calc(20px + var(--safe-bot));left:50%;
+      transform:translateX(-50%) translateY(70px);padding:11px 22px;border-radius:999px;
+      font-size:13px;font-weight:600;color:#fff;white-space:nowrap;z-index:999;
+      transition:transform .28s ease;box-shadow:var(--sh-float);pointer-events:none}
+    .toast.visible{transform:translateX(-50%) translateY(0)}
+    .toast.success{background:var(--success)}
+    .toast.error{background:var(--danger)}
+
+    .bg-Alimentación{background:rgba(34,197,94,.11)}.bg-Vivienda{background:rgba(30,94,255,.09)}
+    .bg-Servicios{background:rgba(59,191,248,.11)}.bg-Transporte{background:rgba(155,138,251,.11)}
+    .bg-Educación{background:rgba(244,114,182,.11)}.bg-Salud{background:rgba(251,146,60,.11)}
+    .bg-Entretenimiento{background:rgba(167,139,250,.11)}.bg-Negocio{background:rgba(52,211,153,.11)}
+    .bg-Familia{background:rgba(96,165,250,.11)}.bg-Deuda{background:rgba(239,68,68,.11)}
+    .bg-Suscripciones{background:rgba(233,196,106,.11)}.bg-Otro{background:rgba(107,114,128,.09)}
+  </style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-top">
+    <a href="index.html" class="back-btn">← Dashboard</a>
+    <a href="index.html" class="profile-btn">
+      <img src="Mike.png" alt="Mike">
+    </a>
+  </div>
+  <div class="hdr-q">¿En qué<br><span class="m">gastaste hoy?</span></div>
+</div>
+
+<div class="main">
+
+  <div class="input-card">
+    <div class="field-lbl">Describe tu gasto</div>
+    <textarea id="inp" placeholder="Ej: Mercado 120k Davivienda" rows="2"></textarea>
+
+    <div class="divider"></div>
+
+    <div class="field-lbl">Método de pago</div>
+    <div class="chips-wrap" id="chipsWrap">
+      <div class="chip debit" data-val="Efectivo">Efectivo</div>
+      <div class="chip debit" data-val="Davivienda">Davivienda</div>
+      <div class="chip debit" data-val="OnTop">OnTop</div>
+      <div class="chip" data-val="TUYA">TUYA</div>
+      <div class="chip" data-val="Alkosto">Alkosto</div>
+      <div class="chip" data-val="Scotiabank">Scotiabank</div>
+      <div class="chip" data-val="SISTECREDITO">Sistecredito</div>
+    </div>
+
+    <div class="type-hint" id="typeHint"></div>
+
+    <button class="cta-btn" id="sendBtn" onclick="submit()">
+      <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+        <path d="M8.5 3V14M8.5 3L5 6.5M8.5 3L12 6.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Registrar gasto
+    </button>
+  </div>
+
+  <div class="sec-lbl">Recientes</div>
+
+  <div id="feed">
+    <div class="empty-card">
+      <div class="empty-ico">⏱️</div>
+      <p class="empty-txt">Aún no hay registros.<br>Escribe tu primer gasto arriba.</p>
+      <div class="example" onclick="fill('Mercado 85k Davivienda')">
+        <div><div class="ex-text">Mercado 85k Davivienda</div><div class="ex-hint">Alimentación · débito · descuenta saldo</div></div>
+        <div class="ex-arrow">↑</div>
+      </div>
+      <div class="example" onclick="fill('Gasolina 95k Efectivo')">
+        <div><div class="ex-text">Gasolina 95k Efectivo</div><div class="ex-hint">Transporte · efectivo · descuenta saldo</div></div>
+        <div class="ex-arrow">↑</div>
+      </div>
+      <div class="example" onclick="fill('Ropa 250k TUYA')">
+        <div><div class="ex-text">Ropa 250k TUYA</div><div class="ex-hint">Entretenimiento · crédito · no descuenta saldo hoy</div></div>
+        <div class="ex-arrow">↑</div>
+      </div>
+      <div class="example" onclick="fill('Pago TUYA 700000 Davivienda')">
+        <div><div class="ex-text">Pago TUYA 700000 Davivienda</div><div class="ex-hint">Pago de tarjeta · descuenta saldo</div></div>
+        <div class="ex-arrow">↑</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+
+  const CREDIT_CARDS = ['tuya','alkosto','scotiabank','sistecredito'];
+  const EMOJI = {
+    'Alimentación':'🍽️','Vivienda':'🏠','Servicios':'💡','Transporte':'🚗',
+    'Educación':'📚','Salud':'❤️','Entretenimiento':'🎬','Negocio':'💼',
+    'Familia':'👨‍👩‍👧','Deuda':'💳','Suscripciones':'📱','Telecomunicaciones':'📡','Otro':'📌'
+  };
+
+  const inp     = document.getElementById('inp');
+  const sendBtn = document.getElementById('sendBtn');
+  const feed    = document.getElementById('feed');
+  const hint    = document.getElementById('typeHint');
+  let hasItems  = false;
+  let activeCard = null;
+
+  inp.addEventListener('input', () => {
+    inp.style.height = 'auto';
+    inp.style.height = Math.min(inp.scrollHeight, 120) + 'px';
+    updateHint();
+  });
+
+  inp.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit(); }
+  });
+
+  document.getElementById('chipsWrap').addEventListener('click', e => {
+    const chip = e.target.closest('.chip');
+    if (!chip) return;
+    const wasActive = chip.classList.contains('active');
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    if (!wasActive) {
+      chip.classList.add('active');
+      activeCard = chip.dataset.val;
+      const txt = inp.value.trim();
+      if (!txt.toLowerCase().includes(activeCard.toLowerCase())) {
+        inp.value = (txt ? txt + ' ' : '') + activeCard;
+      }
+    } else {
+      activeCard = null;
+    }
+    updateHint();
+  });
+
+  function updateHint() {
+    const txt = inp.value.toLowerCase();
+    const isPago = txt.match(/^pag[oóue]/);
+
+    if (isPago) {
+      hint.textContent = '↑ Pago de tarjeta — descuenta de tu saldo líquido';
+      hint.className = 'type-hint payment';
+      return;
+    }
+
+    if (activeCard) {
+      const isCredit = CREDIT_CARDS.includes(activeCard.toLowerCase());
+      if (isCredit) {
+        hint.textContent = '💳 Crédito — NO descuenta saldo hoy, se registra en tarjeta';
+        hint.className = 'type-hint credit';
+      } else {
+        hint.textContent = '✓ Débito/Efectivo — descuenta de tu saldo disponible';
+        hint.className = 'type-hint debit';
+      }
+    } else {
+      hint.textContent = '';
+      hint.className = 'type-hint';
+    }
+  }
+
+  function fill(text) {
+    inp.value = text;
+    inp.style.height = 'auto';
+    inp.focus();
+    updateHint();
+  }
+
+  function showToast(msg, type) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = 'toast ' + type;
+    requestAnimationFrame(() => el.classList.add('visible'));
+    setTimeout(() => el.className = 'toast', 3000);
+  }
+
+  const fmt = n => '$' + Math.round(n).toLocaleString('es-CO');
+
+  function typeTag(type) {
+    if (type === 'gasto_credito') return '<div class="tx-tag">Crédito</div>';
+    if (type === 'pago_tarjeta')  return '<div class="tx-tag payment">Pago</div>';
+    return '<div class="tx-tag debit">Débito</div>';
+  }
+
+  function addItem(p) {
+    if (!hasItems) { feed.innerHTML = ''; hasItems = true; }
+    const emoji = EMOJI[p.category] || '📌';
+    const cuota = p.cuotas > 1 ? ` · ${p.cuotas} cuotas (${fmt(Math.round(p.amount/p.cuotas))}/mes)` : '';
+    const el = document.createElement('div');
+    el.className = 'tx-item';
+    el.innerHTML = `
+      <div class="tx-ico bg-${p.category}">${emoji}</div>
+      <div style="flex:1;min-width:0">
+        <div class="tx-desc">${p.description}</div>
+        <div class="tx-meta">${p.category}${cuota}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div class="tx-amount">${fmt(p.amount)}</div>
+        ${p.card ? typeTag(p.type) : ''}
+      </div>`;
+    feed.insertBefore(el, feed.firstChild);
+  }
+
+  async function submit() {
+    const text = inp.value.trim();
+    if (!text) return;
+
+    sendBtn.disabled = true;
+    sendBtn.innerHTML = '<div class="dots"><span></span><span></span><span></span></div>';
+
+    try {
+      const res  = await fetch(`${SCRIPT_URL}?action=log&text=${encodeURIComponent(text)}`);
+      const data = await res.json();
+      if (data.success) {
+        addItem(data.parsed);
+        inp.value = '';
+        inp.style.height = 'auto';
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        activeCard = null;
+        hint.textContent = '';
+        hint.className = 'type-hint';
+        showToast('✓ Registrado', 'success');
+      } else {
+        showToast(data.error || 'Error al registrar', 'error');
+      }
+    } catch {
+      showToast('Sin conexión', 'error');
+    }
+
+    sendBtn.disabled = false;
+    sendBtn.innerHTML = `
+      <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+        <path d="M8.5 3V14M8.5 3L5 6.5M8.5 3L12 6.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Registrar gasto`;
+    inp.focus();
+  }
+</script>
+</body>
+</html>

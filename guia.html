@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Guía · Comando Financiero</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--blue:#1E5EFF;--blue-end:#4DA3FF;--bg:#F0F3F8;--card:#fff;
+      --text:#1A1D1F;--muted:#6B7280;--divider:#E5E7EB;
+      --success:#22C55E;--warning:#F59E0B;--danger:#EF4444;
+      --sh:0 4px 10px rgba(0,0,0,0.04)}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--bg);font-family:'Sora',sans-serif;color:var(--text);min-height:100vh}
+
+    .hdr{background:linear-gradient(135deg,#1245CC,var(--blue) 50%,var(--blue-end));
+      padding:52px 24px 40px;border-radius:0 0 32px 32px;text-align:center}
+    .back{display:inline-flex;align-items:center;gap:6px;margin-bottom:20px;
+      padding:7px 13px;border-radius:999px;background:rgba(255,255,255,0.18);
+      border:1.5px solid rgba(255,255,255,0.28);color:#fff;font-size:12px;
+      font-weight:600;text-decoration:none;font-family:'Sora',sans-serif}
+    .hdr h1{font-size:22px;font-weight:700;color:#fff;margin-bottom:6px}
+    .hdr p{font-size:13px;color:rgba(255,255,255,0.6)}
+
+    .content{max-width:600px;margin:0 auto;padding:24px 16px 60px}
+
+    .links{display:flex;gap:10px;margin-bottom:20px}
+    .link-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;
+      padding:14px;background:var(--card);border-radius:16px;box-shadow:var(--sh);
+      text-decoration:none;font-size:14px;font-weight:600;color:var(--text)}
+
+    .card{background:var(--card);border-radius:20px;box-shadow:var(--sh);margin-bottom:14px;overflow:hidden}
+    .card-head{display:flex;align-items:center;gap:12px;padding:18px 20px 14px}
+    .num{width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;
+      font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .card-title{font-size:15px;font-weight:700}
+    .card-body{padding:0 20px 18px}
+    .card-body p{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px}
+
+    .ex{background:#F0F3F8;border-radius:12px;padding:12px 14px;margin-bottom:8px}
+    .ex:last-child{margin-bottom:0}
+    .ex code{display:block;font-family:monospace;font-size:14px;font-weight:600;color:var(--blue);margin-bottom:4px}
+    .ex span{font-size:12px;color:var(--muted)}
+
+    .tip{background:rgba(34,197,94,0.07);border-left:3px solid var(--success);
+      border-radius:0 10px 10px 0;padding:10px 14px;font-size:13px;color:#166534;line-height:1.6;margin-top:8px}
+    .warn{background:rgba(245,158,11,0.07);border-left:3px solid var(--warning);
+      border-radius:0 10px 10px 0;padding:10px 14px;font-size:13px;color:#92400E;line-height:1.6;margin-top:8px}
+
+    .sheet-row{padding:12px 20px;border-top:1px solid var(--bg);display:flex;align-items:flex-start;gap:12px}
+    .sheet-tab{background:rgba(30,94,255,0.08);color:var(--blue);font-size:11px;font-weight:700;
+      padding:3px 10px;border-radius:6px;flex-shrink:0;margin-top:1px;white-space:nowrap}
+    .sheet-desc{font-size:13px;color:var(--muted);line-height:1.5}
+  </style>
+</head>
+<body>
+
+<div class="hdr">
+  <a href="index.html" class="back">← Dashboard</a>
+  <h1>Guía rápida</h1>
+  <p>5 situaciones · todo lo que necesitas saber</p>
+</div>
+
+<div class="content">
+
+  <div class="links">
+    <a href="index.html" class="link-btn">📊 Dashboard</a>
+    <a href="entry.html" class="link-btn">✏️ Registrar</a>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><div class="num">1</div><div class="card-title">Gasto en efectivo o débito</div></div>
+    <div class="card-body">
+      <p>Describe qué compraste, cuánto y con qué pagaste. Efectivo y Davivienda descuentan tu saldo líquido inmediatamente.</p>
+      <div class="ex"><code>Mercado 85000 Davivienda</code><span>→ Alimentación · descuenta saldo</span></div>
+      <div class="ex"><code>Gasolina 90k Efectivo</code><span>→ Transporte · descuenta saldo</span></div>
+      <div class="ex"><code>Luz 180000 Davivienda</code><span>→ Servicios · descuenta saldo</span></div>
+      <div class="tip">Palabras clave: mercado · gasolina · colegio · médico · gym · renta · luz · agua · gas · mama · internet</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><div class="num">2</div><div class="card-title">Gasto con tarjeta de crédito y cuotas</div></div>
+    <div class="card-body">
+      <p>Usa el nombre de la tarjeta. Si es en cuotas agrega el número al final. <strong>No descuenta tu saldo líquido</strong> — solo afecta el cupo de la tarjeta.</p>
+      <div class="ex"><code>Ropa 250000 TUYA</code><span>→ crédito · va al cupo de TUYA · no toca tu saldo</span></div>
+      <div class="ex"><code>Televisor 1.8M Alkosto 24 cuotas</code><span>→ 24 cuotas de $75.000/mes</span></div>
+      <div class="ex"><code>Laptop SISTECREDITO 3000000 6 cuotas</code><span>→ 6 cuotas de $500.000/mes</span></div>
+      <div class="warn">Tarjetas de crédito: TUYA · Alkosto · Scotiabank · SISTECREDITO</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><div class="num">3</div><div class="card-title">Registrar un ingreso</div></div>
+    <div class="card-body">
+      <p>Usa la palabra <strong>ingreso</strong> seguida del monto y la cuenta donde llegó.</p>
+      <div class="ex"><code>Ingreso 926519 OnTop</code><span>→ pago de cliente · suma a tu saldo</span></div>
+      <div class="ex"><code>Ingreso 500000 Davivienda</code><span>→ transferencia recibida · suma a tu saldo</span></div>
+      <div class="ex"><code>Ingreso 200 CHASE</code><span>→ ingreso en USD</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><div class="num">4</div><div class="card-title">Pago de tarjeta de crédito</div></div>
+    <div class="card-body">
+      <p>Usa la palabra <strong>Pago</strong> + nombre de tarjeta + monto + cuenta desde donde pagaste.</p>
+      <div class="ex"><code>Pago TUYA 700000 Davivienda</code><span>→ descuenta saldo · reduce cupo · avanza vencimiento</span></div>
+      <div class="ex"><code>Pago Alkosto 1600000 Davivienda</code><span>→ descuenta saldo · reduce cupo de Alkosto</span></div>
+      <div class="tip">El sistema actualiza el saldo de la tarjeta y avanza la fecha de vencimiento automáticamente.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><div class="num">5</div><div class="card-title">Ajustes en la hoja de cálculo</div></div>
+    <div class="card-body">
+      <p>Abre Google Sheets → <strong>Comando Financiero 2026</strong>.</p>
+    </div>
+    <div class="sheet-row">
+      <div class="sheet-tab">Log_Transacciones</div>
+      <div class="sheet-desc">Eliminar un registro incorrecto: clic derecho en el número de fila → Eliminar fila.</div>
+    </div>
+    <div class="sheet-row">
+      <div class="sheet-tab">Estructura_Tarjetas</div>
+      <div class="sheet-desc">Corregir un saldo de tarjeta manualmente si es necesario.</div>
+    </div>
+    <div class="sheet-row">
+      <div class="sheet-tab">Presupuesto_Mensual</div>
+      <div class="sheet-desc">Ajustar los límites mensuales por categoría.</div>
+    </div>
+    <div class="sheet-row">
+      <div class="sheet-tab">Cuotas_Activas</div>
+      <div class="sheet-desc">Cuando termines de pagar una cuota, cambia la columna Estado a <em>completado</em>.</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
